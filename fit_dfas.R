@@ -25,12 +25,12 @@ dfa_data = data.frame(
 for (i in 1:nrow(dfa_data)) {
   # if the file doesn't exist, run the models
   if (!file.exists(paste0(dfa_data$names[i], ".rds"))) {
-    sub_data = ewidata[grep(dfa_data$grep[i], ewidata$code), ]
+    sub_data = ewidata[grep(dfa_data$grep[i], ewidata$code),]
     # reshape data
     melted = melt(sub_data[, c("code", "year", "value")], id.vars = c("code", "year"))
     Y <- dcast(melted, code ~ year)
     names = Y$code
-    Y = as.matrix(Y[, -which(names(Y) == "code")])
+    Y = as.matrix(Y[,-which(names(Y) == "code")])
     
     # do the trend search, and save the table of model selection, along with the best model. By default, this isn't comparing student-t
     # versus normal models, but just estimating the student-t df parameter
@@ -43,5 +43,17 @@ for (i in 1:nrow(dfa_data)) {
       chains = mcmc_chains
     )
     saveRDS(dfa_summary, file = paste0(dfa_data$names[i], ".rds"))
+    
+    # Make default plots (currently work in progress)
+    pdf(paste0(dfa_data$names[i], "_plots.pdf"))
+    rotated = rotate_trends(dfa_summary$best_model)
+    # trends
+    plot_trends(rotated_modelfit, years = colnames(Y))
+    # loadings
+    plot_loadings(rotated_modelfit)
+    # predicted values with data
+    plot_fitted(dfa_summary$best_model)
+    dev.off()
+    
   }
 }
