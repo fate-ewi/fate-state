@@ -7,6 +7,7 @@ library(fields)
 require(zoo)
 require(ape)
 
+
 # dowload the latest version of ERSSTv4 
 # download.file(url="ftp://ftp.cdc.noaa.gov/Datasets/noaa.ersst/sst.mnmean.v4.nc", destfile= "/Users/MikeLitzow/Documents/R/NSF-GOA/sst.mnmean.v4.nc")
 
