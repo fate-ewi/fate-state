@@ -1,7 +1,3 @@
-# and yet another change
-
-# a couple changes!
-
 setwd("/Users/MikeLitzow/Documents/R/FATE")
 library(ncdf4)
 library(maps)
@@ -1185,3 +1181,5 @@ scc.AMJJASO <- SST.sum
 seas.SST <- cbind(seas.SST, scc.JFM, scc.AMJJASO)
 
 write.csv(seas.SST, "seasonal SST by system.csv")
+
+
