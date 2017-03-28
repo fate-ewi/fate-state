@@ -12,30 +12,12 @@ mcmc_chains = 3
 rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
-dfa_data = data.frame(
-  grep = c(".LAT", "BLKI.", "CHI.", "PAV.", ".CO$", ".PI$", "ICY.", 
-    "ICH.", "SEWARDLINE_", "AKCLIM_EBS_", "AKCLIM_GOA_", "calcofi", "SBRD"),
-  names = c(
-    "Latitude",
-    "BLKI",
-    "CHI",
-    "PAV",
-    "Coho",
-    "Pink",
-    "ICY",
-    "AK_Ichthyoplankton",
-    "Seward Line",
-    "AK Climate - GOA",
-    "AK Climate - EBS",
-    "CALCOFI",
-    "CC_SBRD"
-  )
-)
+regions = unique(ewidata$system)
 
-for (i in 1:nrow(dfa_data)) {
+for (i in 1:length(regions)) {
   # if the file doesn't exist, run the models
-  if (!file.exists(paste0(dfa_data$names[i], ".rds"))) {
-    sub_data = ewidata[grep(dfa_data$grep[i], ewidata$code),]
+  if (!file.exists(paste0("Ecosystem_", regions[i], ".rds"))) {
+    sub_data = ewidata[ewidata$system %in% regions[i],]
     # reshape data
     melted = melt(sub_data[, c("code", "year", "value")], id.vars = c("code", "year"))
     Y <- dcast(melted, code ~ year)
@@ -52,10 +34,10 @@ for (i in 1:nrow(dfa_data)) {
       variance = c("unequal", "equal"),
       chains = mcmc_chains
     )
-    saveRDS(dfa_summary, file = paste0(dfa_data$names[i], ".rds"))
+    saveRDS(dfa_summary, file = paste0("Ecosystem_", regions[i], ".rds"))
     
     # Make default plots (currently work in progress)
-    pdf(paste0(dfa_data$names[i], "_plots.pdf"))
+    pdf(paste0("Ecosystem_", regions[i], "_plots.pdf"))
     rotated = rotate_trends(dfa_summary$best_model)
     # trends
     plot_trends(rotated_modelfit, years = colnames(Y))
