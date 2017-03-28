@@ -58,7 +58,7 @@ for (i in 1:nrow(dfa_data)) {
     pdf(paste0(dfa_data$names[i], "_plots.pdf"))
     rotated = rotate_trends(dfa_summary$best_model)
     # trends
-    plot_trends(rotated_modelfit, years = colnames(Y))
+    plot_trends(rotated_modelfit, years = as.numeric(colnames(Y)))
     # loadings
     plot_loadings(rotated_modelfit)
     # predicted values with data
