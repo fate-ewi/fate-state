@@ -1,7 +1,11 @@
-
 library(ewidata)
 library(knitr)
 library(reshape2)
+library(rstan)
+
+devtools::install_github("fate-ewi/bayesdfa")
+library(bayesdfa)
+
 mcmc_iter = 4000
 max_trends = 4
 mcmc_chains = 3
