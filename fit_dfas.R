@@ -13,7 +13,8 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
 dfa_data = data.frame(
-  grep = c(".LAT", "BLKI.", "CHI.", "PAV.", ".CO$", ".PI$", "ICY.", "ICH."),
+  grep = c(".LAT", "BLKI.", "CHI.", "PAV.", ".CO$", ".PI$", "ICY.", 
+    "ICH.", "SEWARDLINE_", "AKCLIM_EBS_", "AKCLIM_GOA_", "calcofi", "SBRD"),
   names = c(
     "Latitude",
     "BLKI",
@@ -22,7 +23,12 @@ dfa_data = data.frame(
     "Coho",
     "Pink",
     "ICY",
-    "Ichthyoplankton"
+    "AK_Ichthyoplankton",
+    "Seward Line",
+    "AK Climate - GOA",
+    "AK Climate - EBS",
+    "CALCOFI",
+    "CC_SBRD"
   )
 )
 
