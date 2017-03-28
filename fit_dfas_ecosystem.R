@@ -40,7 +40,7 @@ for (i in 1:length(regions)) {
     pdf(paste0("Ecosystem_", regions[i], "_plots.pdf"))
     rotated = rotate_trends(dfa_summary$best_model)
     # trends
-    plot_trends(rotated_modelfit, years = colnames(Y))
+    plot_trends(rotated, years = as.numeric(colnames(Y)))
     # loadings
     plot_loadings(rotated_modelfit)
     # predicted values with data
@@ -49,5 +49,3 @@ for (i in 1:length(regions)) {
     
   }
 }
-
-
