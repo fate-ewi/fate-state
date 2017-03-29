@@ -15,15 +15,16 @@ options(mc.cores = parallel::detectCores())
 regions = unique(ewidata$system)
 
 for (i in 1:length(regions)) {
+  # process data
+  sub_data = ewidata[ewidata$system %in% regions[i],]
+  # reshape data
+  melted = melt(sub_data[, c("code", "year", "value")], id.vars = c("code", "year"))
+  Y <- dcast(melted, code ~ year)
+  names = Y$code
+  Y = as.matrix(Y[,-which(names(Y) == "code")])
+  
   # if the file doesn't exist, run the models
   if (!file.exists(paste0("Ecosystem_", regions[i], ".rds"))) {
-    sub_data = ewidata[ewidata$system %in% regions[i],]
-    # reshape data
-    melted = melt(sub_data[, c("code", "year", "value")], id.vars = c("code", "year"))
-    Y <- dcast(melted, code ~ year)
-    names = Y$code
-    Y = as.matrix(Y[,-which(names(Y) == "code")])
-    
     # do the trend search, and save the table of model selection, along with the best model. By default, this isn't comparing student-t
     # versus normal models, but just estimating the student-t df parameter
     dfa_summary = find_dfa_trends(
@@ -35,17 +36,27 @@ for (i in 1:length(regions)) {
       chains = mcmc_chains
     )
     saveRDS(dfa_summary, file = paste0("Ecosystem_", regions[i], ".rds"))
-    
-    # Make default plots (currently work in progress)
-    pdf(paste0("Ecosystem_", regions[i], "_plots.pdf"))
-    rotated = rotate_trends(dfa_summary$best_model)
-    # trends
-    plot_trends(rotated, years = as.numeric(colnames(Y)))
-    # loadings
-    plot_loadings(rotated_modelfit)
-    # predicted values with data
-    plot_fitted(dfa_summary$best_model)
-    dev.off()
-    
   }
+  
+  if(file.exists(paste0("Ecosystem_", regions[i], ".rds"))) dfa_summary = readRDS(file = paste0("Ecosystem_", regions[i], ".rds"))
+  
+  # Make default plots (currently work in progress)
+  pdf(paste0("Ecosystem_", regions[i], "_plots.pdf"))
+  rotated = rotate_trends(dfa_summary$best_model)
+  # trends
+  plot_trends(rotated, years = as.numeric(colnames(Y)))
+  # loadings
+  plot_loadings(rotated, names = names)
+  if(ncol(rotated$Z_rot_mean)==2) {
+    plot(rotated$Z_rot_mean[,1], rotated$Z_rot_mean[,2], col="white", 
+      xlab="Loading 1", ylab = "Loading 2")
+    text(rotated$Z_rot_mean[,1], rotated$Z_rot_mean[,2], names, cex=0.3)
+    lines(c(-10,10),c(0,0))
+    lines(c(0,0), c(-10,10))
+  }
+  # predicted values with data
+  plot_fitted(dfa_summary$best_model, names=names) + 
+    theme(strip.text.x = element_text(size = 6))
+  dev.off()  
+  
 }
