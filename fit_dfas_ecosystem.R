@@ -44,9 +44,9 @@ for (i in 1:length(regions)) {
   pdf(paste0("Ecosystem_", regions[i], "_plots.pdf"))
   rotated = rotate_trends(dfa_summary$best_model)
   # trends
-  plot_trends(rotated, years = as.numeric(colnames(Y)))
+  print(plot_trends(rotated, years = as.numeric(colnames(Y))))
   # loadings
-  plot_loadings(rotated, names = names)
+  print(plot_loadings(rotated, names = names))
   if(ncol(rotated$Z_rot_mean)==2) {
     plot(rotated$Z_rot_mean[,1], rotated$Z_rot_mean[,2], col="white", 
       xlab="Loading 1", ylab = "Loading 2")
@@ -55,8 +55,8 @@ for (i in 1:length(regions)) {
     lines(c(0,0), c(-10,10))
   }
   # predicted values with data
-  plot_fitted(dfa_summary$best_model, names=names) + 
-    theme(strip.text.x = element_text(size = 6))
+  print(plot_fitted(dfa_summary$best_model, names=names) + 
+    theme(strip.text.x = element_text(size = 6)))
   dev.off()  
   
 }
